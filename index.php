@@ -27,13 +27,22 @@ switch($_GET["action"]) {
 			}
 		}
 	break;
-		
+	case "remove":
+		if(!empty($_SESSION["cart_item"])) {
+			foreach($_SESSION["cart_item"] as $k => $v) {
+					if($_GET["code"] == $k)
+						unset($_SESSION["cart_item"][$k]);				
+					if(empty($_SESSION["cart_item"]))
+						unset($_SESSION["cart_item"]);
+			}
+		}
+	break;	
 }
 }
 ?>
 <HTML>
 <HEAD>
-<TITLE>Simple PHP Shopping Cart</TITLE>
+<TITLE>Shopping Cart</TITLE>
 <link href="style.css" type="text/css" rel="stylesheet" />
 </HEAD>
 <BODY>
@@ -49,6 +58,7 @@ if(isset($_SESSION["cart_item"])){
 <th style="text-align:left;"><strong>Code</strong></th>
 <th style="text-align:right;"><strong>Quantity</strong></th>
 <th style="text-align:right;"><strong>Price</strong></th>
+<th style="text-align:center;"><strong>Action</strong></th>
 </tr>	
 <?php		
     foreach ($_SESSION["cart_item"] as $item){
@@ -58,6 +68,7 @@ if(isset($_SESSION["cart_item"])){
 				<td style="text-align:left;border-bottom:#F0F0F0 1px solid;"><?php echo $item["code"]; ?></td>
 				<td style="text-align:right;border-bottom:#F0F0F0 1px solid;"><?php echo $item["quantity"]; ?></td>
 				<td style="text-align:right;border-bottom:#F0F0F0 1px solid;"><?php echo "$".$item["price"]; ?></td>
+				<td style="text-align:center;border-bottom:#F0F0F0 1px solid;"><a href="index.php?action=remove&code=<?php echo $item["code"]; ?>" class="btnRemoveAction">Remove Item</a></td>
 				</tr>
 				<?php
         $item_total += ($item["price"]*$item["quantity"]);
