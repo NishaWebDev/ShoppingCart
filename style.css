@@ -9,6 +9,19 @@ body{width:610px;font-family:calibri;}
     background: #6aadf1;
 	margin-bottom:10px;
 }
+a.btnRemoveAction{color:#D60202;border:0;padding:2px 10px;font-size:0.9em;}
+a.btnRemoveAction:visited{color:#D60202;border:0;padding:2px 10px;font-size:0.9em;}
+
+#btnEmpty {
+	background-color: #ffffff;
+    border: #FFF 1px solid;
+    padding: 1px 10px;
+    color: #ff0000;
+    font-size: 0.8em;
+    float: right;
+    text-decoration: none;
+    border-radius: 4px;
+}
 .btnAddAction{    background-color: #eb9e4f;
     border: 0;
     padding: 3px 10px;
