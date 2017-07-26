@@ -2,6 +2,34 @@
 session_start();
 require_once("dbcontroller.php");
 $db_handle = new DBController();
+if(!empty($_GET["action"])) {
+switch($_GET["action"]) {
+	case "add":
+		if(!empty($_POST["quantity"])) {
+			$productByCode = $db_handle->runQuery("SELECT * FROM tblproduct WHERE code='" . $_GET["code"] . "'");
+			$itemArray = array($productByCode[0]["code"]=>array('name'=>$productByCode[0]["name"], 'code'=>$productByCode[0]["code"], 'quantity'=>$_POST["quantity"], 'price'=>$productByCode[0]["price"]));
+			
+			if(!empty($_SESSION["cart_item"])) {
+				if(in_array($productByCode[0]["code"],array_keys($_SESSION["cart_item"]))) {
+					foreach($_SESSION["cart_item"] as $k => $v) {
+							if($productByCode[0]["code"] == $k) {
+								if(empty($_SESSION["cart_item"][$k]["quantity"])) {
+									$_SESSION["cart_item"][$k]["quantity"] = 0;
+								}
+								$_SESSION["cart_item"][$k]["quantity"] += $_POST["quantity"];
+							}
+					}
+				} else {
+					$_SESSION["cart_item"] = array_merge($_SESSION["cart_item"],$itemArray);
+				}
+			} else {
+				$_SESSION["cart_item"] = $itemArray;
+			}
+		}
+	break;
+		
+}
+}
 ?>
 <HTML>
 <HEAD>
@@ -9,6 +37,43 @@ $db_handle = new DBController();
 <link href="style.css" type="text/css" rel="stylesheet" />
 </HEAD>
 <BODY>
+<div id="shopping-cart">
+<?php
+if(isset($_SESSION["cart_item"])){
+    $item_total = 0;
+?>	
+<table cellpadding="10" cellspacing="1">
+<tbody>
+<tr>
+<th style="text-align:left;"><strong>Name</strong></th>
+<th style="text-align:left;"><strong>Code</strong></th>
+<th style="text-align:right;"><strong>Quantity</strong></th>
+<th style="text-align:right;"><strong>Price</strong></th>
+</tr>	
+<?php		
+    foreach ($_SESSION["cart_item"] as $item){
+		?>
+				<tr>
+				<td style="text-align:left;border-bottom:#F0F0F0 1px solid;"><strong><?php echo $item["name"]; ?></strong></td>
+				<td style="text-align:left;border-bottom:#F0F0F0 1px solid;"><?php echo $item["code"]; ?></td>
+				<td style="text-align:right;border-bottom:#F0F0F0 1px solid;"><?php echo $item["quantity"]; ?></td>
+				<td style="text-align:right;border-bottom:#F0F0F0 1px solid;"><?php echo "$".$item["price"]; ?></td>
+				</tr>
+				<?php
+        $item_total += ($item["price"]*$item["quantity"]);
+		}
+		?>
+
+<tr>
+<td colspan="5" align=right><strong>Total:</strong> <?php echo "$".$item_total; ?></td>
+</tr>
+</tbody>
+</table>		
+  <?php
+}
+?>
+</div>
+
 <div id="product-grid">
 	<div class="txt-heading">Products</div>
 	<?php
